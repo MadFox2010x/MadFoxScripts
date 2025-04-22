@@ -35,6 +35,7 @@ ControlsHint.Text = [[🎮 Управление:
 B - Разблокировать FOV
 N - Разблокировать FOV + мышку
 M - Вернуть всё обратно
+V - Включить noclip
 
  by MadFox]] 
 ControlsHint.BorderSizePixel = 0
@@ -52,6 +53,12 @@ soundN.Volume = 1
 local soundM = Instance.new("Sound", player.PlayerGui)
 soundM.SoundId = "rbxassetid://6734419174"
 soundM.Volume = 1
+
+local soundV = Instance.new("Sound", player.PlayerGui)
+soundV.SoundId = "rbxassetid://12345678"  -- Замените на нужный ID для звука noclip
+soundV.Volume = 1
+
+local noclipEnabled = false
 
 local function showMessage(text, color)
 	Label.Text = text
@@ -95,5 +102,21 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 		UIS.MouseIconEnabled = false
 		soundM:Play()
 		showMessage("🔒 Возврат в First Person", Color3.fromRGB(255, 100, 100))
+
+	elseif input.KeyCode == Enum.KeyCode.V then
+		noclipEnabled = not noclipEnabled
+		if noclipEnabled then
+			-- Включаем noclip
+			player.Character.Humanoid.PlatformStand = true
+			player.Character:WaitForChild("HumanoidRootPart").CanCollide = false
+			soundV:Play()
+			showMessage("🚀 Noclip включен", Color3.fromRGB(255, 255, 100))
+		else
+			-- Выключаем noclip
+			player.Character.Humanoid.PlatformStand = false
+			player.Character:WaitForChild("HumanoidRootPart").CanCollide = true
+			soundV:Play()
+			showMessage("❌ Noclip выключен", Color3.fromRGB(255, 100, 100))
+		end
 	end
 end)
