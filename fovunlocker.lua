@@ -36,6 +36,7 @@ B - Разблокировать FOV
 N - Разблокировать FOV + мышку
 M - Вернуть всё обратно
 V - Включить noclip
+G - Включить флай
 
  by MadFox]] 
 ControlsHint.BorderSizePixel = 0
@@ -58,7 +59,14 @@ local soundV = Instance.new("Sound", player.PlayerGui)
 soundV.SoundId = "rbxassetid://12345678"  -- Замените на нужный ID для звука noclip
 soundV.Volume = 1
 
+local soundG = Instance.new("Sound", player.PlayerGui)
+soundG.SoundId = "rbxassetid://12345678"  -- Замените на нужный ID для звука флая
+soundG.Volume = 1
+
 local noclipEnabled = false
+local flying = false
+local speed = 50
+local bodyVelocity = nil
 
 local function showMessage(text, color)
 	Label.Text = text
@@ -117,6 +125,27 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 			player.Character:WaitForChild("HumanoidRootPart").CanCollide = true
 			soundV:Play()
 			showMessage("❌ Noclip выключен", Color3.fromRGB(255, 100, 100))
+		end
+
+	elseif input.KeyCode == Enum.KeyCode.G then
+		flying = not flying
+		if flying then
+			-- Включаем флай
+			local humanoid = player.Character:WaitForChild("Humanoid")
+			bodyVelocity = Instance.new("BodyVelocity")
+			bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
+			bodyVelocity.Velocity = Vector3.new(0, speed, 0)
+			bodyVelocity.Parent = player.Character:WaitForChild("HumanoidRootPart")
+			soundG:Play()
+			showMessage("✈️ Флай включен", Color3.fromRGB(100, 255, 255))
+		else
+			-- Выключаем флай
+			if bodyVelocity then
+				bodyVelocity:Destroy()
+				bodyVelocity = nil
+			end
+			soundG:Play()
+			showMessage("❌ Флай выключен", Color3.fromRGB(255, 100, 100))
 		end
 	end
 end)
